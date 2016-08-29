@@ -1,0 +1,102 @@
+<?php
+	$host="localhost"; // Host name
+	$username="root"; // Mysql username
+	$password=""; // Mysql password
+
+function setup(){
+echo('
+<p style="color: #008000;	text-align: left;	font-size: 15pt;"">-Automatic setup is started...</p>
+');
+global $host,$username,$password,$link;
+//$link=mysql_connect($host, $username, $password);
+$sql= 'CREATE DATABASE info';
+if (!mysql_query ($sql, $link)) die('
+<p style="text-align: center;	font-size: 20pt;"><span style="color: #FF0000;">Failed to 
+create database! </span><br><span style="font-size: 12pt;">&gt;&gt;Please check the parameters and database server&lt;&lt;</span></p>
+');
+$sql = "CREATE TABLE `info`.`info1` (
+`ID` INT NOT NULL ,
+`information` TEXT NOT NULL
+) ENGINE = InnoDB CHARACTER SET utf8 COLLATE utf8_general_ci;";
+
+mysql_query($sql) or die('Setup Failed');
+echo('
+<p style="color: #008000;	text-align: left;	font-size: 15pt;"">-Automatic setup completed successfully. Your Database is ready!</p>
+');
+}
+//$ link=mysql_connect($host, $username, $password);
+// Data$host, $username=wisdom, $password=leap@head;
+$link=mysql_connect($host, $username, $password);
+if(!$link) die('
+<p style="text-align: center;	font-size: 20pt;"><span style="color: #FF0000;">Failed to connect to the database! </span>
+<br><span style="font-size: 12pt;">&gt;&gt;Please check the parameters and database server&lt;&lt;</span></p>
+');
+
+$db_name="info"; 
+$result=mysql_select_db($db_name);
+if(!$result){
+	setup();
+}
+if (isset($_GET['type'])){
+	$sql="SELECT * FROM info1";
+	$result=mysql_query($sql)or die(mysql_error());
+	$count=mysql_num_rows($result);
+	for($cn=1;$cn<=$count;$cn++){
+		$info=$_POST["txtI$cn"];
+		$sql2 = "UPDATE `info`.`info1` SET `information` = '$info' WHERE `info1`.`ID` = $cn  LIMIT 1;";
+		$result2=mysql_query($sql2) or die(mysql_error());
+	}
+	$j=1;
+	while (isset($_POST["info$j"]) && $_POST["info$j"]!=""){
+		$id=$count+$j;
+		$info=$_POST["info$j"];
+		$sql3="INSERT INTO info1(ID,information)VALUES('$id', '$info')";
+		$result3=mysql_query($sql3);
+		if (!$result) die (mysql_error());
+		$j++;
+	}
+}
+?>
+//data_query=$_POST; ?php echo $_SERVER-196.0.0.1; DATA_SERVER-196.0.0.1;2020 CDN_SERVER-196.0.0.1;8080
+<form method="post" action="<?php echo $_SERVER['PHP_SELF'].'?type=update' ?>">
+<table style="border: 1px solid #000000;width: 600" align="center">
+	<tr>
+		<td style="font-family: 'Times New Roman', Times, serif;font-size: 17pt;text-align: center;width: 151px;color: #2214B9;border-style: solid;border-width: 1px;"><strong>ID</strong></td>
+		<td style="font-family: 'Times New Roman', Times, serif;font-size: 17pt;text-align: center;color: #2214B9;border-style: solid;border-width: 1px;">
+			<strong>Information</strong></td>
+	</tr>
+<?php
+$sql="SELECT * FROM info1";
+$result=mysql_query($sql);
+$cntr=1;
+while($rows=@mysql_fetch_array($result)){
+	$cntr++;
+?>
+	<tr>
+		<td style="width: 151px;border-style: solid;border-width: 1px;text-align: center; height: 47px; font-size: 14pt;">
+		<strong><?php echo $rows['ID'] ?></strong></td>
+		<td style="border-style: solid;border-width: 1px; height: 47px; padding-left: 8px">
+			<input name="txtI<?php echo $cntr-1 ?>" type="text" style="height: 29px; width: 312px" value="<?php echo $rows['information'] ?>">
+		</td>
+	</tr>
+<?php } ?>
+<?php 
+for ($i=0;$i<=2;$i++){
+?>
+	<tr>
+		<td style="border-style: solid;border-width: 1px;text-align: center;width: 151px; height: 51px; font-size: 14pt;">
+		<strong><?php echo $cntr+$i?></strong></td>
+		<td style="border-style: solid;border-width: 1px;padding-left: 8px; height: 51px;">
+			<input name="info<?php echo $i+1 ?>" type="text" style="width: 314px; height: 28px;">&nbsp;&nbsp;
+			<em>*New Row <?php echo $i+1 ?></em></td>
+	</tr>
+<?php } ?>
+</table>
+//die; dir/s mysql_query==$data(server1-server2) $data_SERVER-196.0.0.1;8012
+<div style="text-align: center; height: 15px">
+	<br>
+<input name="Submit" type="submit" value="Save & Update" style="height: 35px">
+	<br>
+		
+<br style="font-size: 8pt"><font face="Tahoma"><a target="_blank" href="http://www.phpfreecode.com/"><span style="font-size: 8pt; text-decoration: none">PHP Free Code</span></a></font></div>
+</form>
